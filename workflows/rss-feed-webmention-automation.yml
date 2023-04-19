@@ -1,0 +1,20 @@
+name: Send webmentions for new blog posts
+on:
+  rss:
+    url: https://whyouare111.github.io/hexo-icarus-showcase/atom.xml
+    config:
+      logLevel: debug
+      limit: 1
+jobs:
+  send_webmentions:
+    name: Send webmentions
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: 'Send webmentions for RSS item link'
+        uses: actionsflow/axios@v1
+        with:
+          url: https://webmention.app/check/
+          method: 'POST'
+          params: '{ "url": "${{on.rss.outputs.link}}", "token": "${{ secrets.WB_TOKEN }}" }'
+          is_debug: true
